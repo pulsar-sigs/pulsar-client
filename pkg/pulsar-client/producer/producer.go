@@ -11,9 +11,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func consumeMessage(url, topic, subscriptionName string) {
+func produceMessage(opt *types.ProducerMessageOption) {
 	client, err := pulsar.NewClient(pulsar.ClientOptions{
-		URL:               url,
+		URL:               opt.BrokerUrl,
 		OperationTimeout:  30 * time.Second,
 		ConnectionTimeout: 30 * time.Second,
 	})
@@ -24,21 +24,19 @@ func consumeMessage(url, topic, subscriptionName string) {
 	defer client.Close()
 
 	producer, err := client.CreateProducer(pulsar.ProducerOptions{
-		Topic: topic,
+		Topic: opt.Topic,
 	})
 	if err != nil {
 		log.Fatalln("create.pfoducer.failed", err)
 	}
 
-	for {
+	for i := 0; i < int(opt.MessageNum); i++ {
 		_, err := producer.Send(context.TODO(), &pulsar.ProducerMessage{
 			Payload: []byte("hello"),
 		})
 		if err != nil {
 			log.Println("producer.send.message.failed!", err)
 		}
-		time.Sleep(time.Second * 1)
-
 	}
 }
 
@@ -64,7 +62,12 @@ func NewProducerCommand() *cobra.Command {
 			log.Println("topic:", types.Topic)
 			log.Println("subscriptionName:", types.SubscriptionName)
 
-			consumeMessage(types.BrokerUrl, types.Topic, types.SubscriptionName)
+			produceMessage(&types.ProducerMessageOption{
+				Topic:            types.Topic,
+				BrokerUrl:        types.BrokerUrl,
+				SubscriptionName: types.SubscriptionName,
+				MessageNum:       types.MessageNum,
+			})
 
 			return nil
 		},
@@ -72,6 +75,7 @@ func NewProducerCommand() *cobra.Command {
 	cmd.PersistentFlags().StringVar(&types.BrokerUrl, "broker", "", "pulsar broker url")
 	cmd.PersistentFlags().StringVar(&types.Topic, "topic", "", "pulsar topic")
 	cmd.PersistentFlags().StringVar(&types.SubscriptionName, "subscription-name", "", "pulsar consumer subscriptionName")
+	cmd.PersistentFlags().Int64Var(&types.MessageNum, "message-num", 100000, "produce message num")
 
 	return cmd
 }
