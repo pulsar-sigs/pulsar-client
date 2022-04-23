@@ -19,6 +19,7 @@ package cmd
 
 import (
 	"github.com/pulsar-sigs/pulsar-client/pkg/pulsar-client/consumer"
+	"github.com/pulsar-sigs/pulsar-client/pkg/pulsar-client/producer"
 	"github.com/spf13/cobra"
 )
 
@@ -33,6 +34,7 @@ var (
 // Execute executes the root command.
 func Execute() error {
 	rootCmd.AddCommand(consumer.NewConsumerCommand())
+	rootCmd.AddCommand(producer.NewProducerCommand())
 	return rootCmd.Execute()
 }
 
