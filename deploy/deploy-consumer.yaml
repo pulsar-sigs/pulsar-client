@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pulsar-consumer
+  namespace: default
+  labels:
+    app: pulsar-consumer
+spec:
+  selector:
+    matchLabels:
+      app: pulsar-consumer
+  template:
+    metadata:
+      labels:
+        app: pulsar-consumer
+    spec:
+      containers:
+        - name: pulsar-consumer
+          image: ghcr.io/pulsar-sigs/pulsar-client:v0.1.0
+          imagePullPolicy: IfNotPresent
+          # command:
+          #   - receive
+          args: ["consumer","--broker","pulsar://pulsar.default","--topic","keda","--subscription-name","scaler"]
