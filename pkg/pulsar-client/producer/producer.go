@@ -30,6 +30,7 @@ func produceMessage(opt *types.ProducerMessageOption) {
 		log.Fatalln("create.pfoducer.failed", err)
 	}
 
+	log.Println("will produce message total ", opt.MessageNum)
 	for i := 0; i < int(opt.MessageNum); i++ {
 		_, err := producer.Send(context.TODO(), &pulsar.ProducerMessage{
 			Payload: []byte("hello"),
@@ -75,7 +76,7 @@ func NewProducerCommand() *cobra.Command {
 	cmd.PersistentFlags().StringVar(&types.BrokerUrl, "broker", "", "pulsar broker url")
 	cmd.PersistentFlags().StringVar(&types.Topic, "topic", "", "pulsar topic")
 	cmd.PersistentFlags().StringVar(&types.SubscriptionName, "subscription-name", "", "pulsar consumer subscriptionName")
-	cmd.PersistentFlags().Int64Var(&types.MessageNum, "message-num", 100000, "produce message num")
+	cmd.PersistentFlags().Int64Var(&types.MessageNum, "message-num", 10000, "produce message num")
 
 	return cmd
 }

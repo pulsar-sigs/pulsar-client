@@ -7,14 +7,13 @@ import (
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
-	"github.com/apache/pulsar/pulsar-function-go/logutil"
 	"github.com/pulsar-sigs/pulsar-client/pkg/pulsar-client/types"
 	"github.com/spf13/cobra"
 )
 
-func consumeMessage(url, topic, subscriptionName string) {
+func consumeMessage(opt *types.ConsumerMessageOption) {
 	client, err := pulsar.NewClient(pulsar.ClientOptions{
-		URL:               url,
+		URL:               opt.BrokerUrl,
 		OperationTimeout:  30 * time.Second,
 		ConnectionTimeout: 30 * time.Second,
 	})
@@ -25,8 +24,8 @@ func consumeMessage(url, topic, subscriptionName string) {
 	defer client.Close()
 
 	pulsarconsumer, err := client.Subscribe(pulsar.ConsumerOptions{
-		Topic:            topic,
-		SubscriptionName: subscriptionName,
+		Topic:            opt.Topic,
+		SubscriptionName: opt.SubscriptionName,
 		Type:             pulsar.Shared,
 	})
 	if err != nil {
@@ -37,11 +36,13 @@ func consumeMessage(url, topic, subscriptionName string) {
 	for {
 		msg, err := pulsarconsumer.Receive(context.TODO())
 		if err != nil {
-			logutil.Error("receive message failed!", err)
+			log.Println("receive message failed!", err)
 			continue
 		}
-		// time.Sleep(time.Second * 1)
-		log.Println(msg)
+		if opt.ConsumeTime > 0 {
+			time.Sleep(time.Second * time.Duration(opt.ConsumeTime))
+		}
+		log.Println("consume message:", string(msg.Payload()))
 		pulsarconsumer.Ack(msg)
 	}
 }
@@ -68,7 +69,12 @@ func NewConsumerCommand() *cobra.Command {
 			log.Println("topic:", types.Topic)
 			log.Println("subscriptionName:", types.SubscriptionName)
 
-			consumeMessage(types.BrokerUrl, types.Topic, types.SubscriptionName)
+			consumeMessage(&types.ConsumerMessageOption{
+				BrokerUrl:        types.BrokerUrl,
+				Topic:            types.Topic,
+				SubscriptionName: types.SubscriptionName,
+				ConsumeTime:      types.ConsumeTime,
+			})
 
 			return nil
 		},
@@ -76,6 +82,7 @@ func NewConsumerCommand() *cobra.Command {
 	cmd.PersistentFlags().StringVar(&types.BrokerUrl, "broker", "", "pulsar broker url")
 	cmd.PersistentFlags().StringVar(&types.Topic, "topic", "", "pulsar topic")
 	cmd.PersistentFlags().StringVar(&types.SubscriptionName, "subscription-name", "", "pulsar consumer subscriptionName")
+	cmd.PersistentFlags().Int64Var(&types.ConsumeTime, "consume-time", 0, "consume time for one message, 0 by default")
 
 	return cmd
 }
