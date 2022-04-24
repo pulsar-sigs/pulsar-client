@@ -40,7 +40,7 @@ func consumeMessage(opt *types.ConsumerMessageOption) {
 			continue
 		}
 		if opt.ConsumeTime > 0 {
-			time.Sleep(time.Second * time.Duration(opt.ConsumeTime))
+			time.Sleep(time.Millisecond * time.Duration(opt.ConsumeTime))
 		}
 		log.Println("consume message:", string(msg.Payload()))
 		pulsarconsumer.Ack(msg)
@@ -82,7 +82,7 @@ func NewConsumerCommand() *cobra.Command {
 	cmd.PersistentFlags().StringVar(&types.BrokerUrl, "broker", "", "pulsar broker url")
 	cmd.PersistentFlags().StringVar(&types.Topic, "topic", "", "pulsar topic")
 	cmd.PersistentFlags().StringVar(&types.SubscriptionName, "subscription-name", "", "pulsar consumer subscriptionName")
-	cmd.PersistentFlags().Int64Var(&types.ConsumeTime, "consume-time", 0, "consume time for one message, 0 by default")
+	cmd.PersistentFlags().Int64Var(&types.ConsumeTime, "consume-time", 0, "consume time (millisecond) for one message, 0 by default")
 
 	return cmd
 }
