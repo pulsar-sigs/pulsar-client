@@ -55,19 +55,14 @@ func NewProducerCommand() *cobra.Command {
 				cmd.Help()
 				return errors.New("topic is empty")
 			}
-			if types.SubscriptionName == "" {
-				cmd.Help()
-				return errors.New("subscriptionName is empty")
-			}
 			log.Println("broker:", types.BrokerUrl)
 			log.Println("topic:", types.Topic)
 			log.Println("subscriptionName:", types.SubscriptionName)
 
 			produceMessage(&types.ProducerMessageOption{
-				Topic:            types.Topic,
-				BrokerUrl:        types.BrokerUrl,
-				SubscriptionName: types.SubscriptionName,
-				MessageNum:       types.MessageNum,
+				Topic:      types.Topic,
+				BrokerUrl:  types.BrokerUrl,
+				MessageNum: types.MessageNum,
 			})
 
 			return nil
@@ -75,7 +70,6 @@ func NewProducerCommand() *cobra.Command {
 	}
 	cmd.PersistentFlags().StringVar(&types.BrokerUrl, "broker", "", "pulsar broker url")
 	cmd.PersistentFlags().StringVar(&types.Topic, "topic", "", "pulsar topic")
-	cmd.PersistentFlags().StringVar(&types.SubscriptionName, "subscription-name", "", "pulsar consumer subscriptionName")
 	cmd.PersistentFlags().Int64Var(&types.MessageNum, "message-num", 10000, "produce message num")
 
 	return cmd
