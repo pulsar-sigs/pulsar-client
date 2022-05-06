@@ -38,6 +38,9 @@ func produceMessage(opt *types.ProducerMessageOption) {
 		if err != nil {
 			log.Println("producer.send.message.failed!", err)
 		}
+		if opt.ProduceTime > 0 {
+			time.Sleep(time.Millisecond * time.Duration(opt.ProduceTime))
+		}
 	}
 }
 
@@ -60,9 +63,10 @@ func NewProducerCommand() *cobra.Command {
 			log.Println("subscriptionName:", types.SubscriptionName)
 
 			produceMessage(&types.ProducerMessageOption{
-				Topic:      types.Topic,
-				BrokerUrl:  types.BrokerUrl,
-				MessageNum: types.MessageNum,
+				Topic:       types.Topic,
+				BrokerUrl:   types.BrokerUrl,
+				MessageNum:  types.MessageNum,
+				ProduceTime: types.ProduceTime,
 			})
 
 			return nil
@@ -71,6 +75,7 @@ func NewProducerCommand() *cobra.Command {
 	cmd.PersistentFlags().StringVar(&types.BrokerUrl, "broker", "", "pulsar broker url")
 	cmd.PersistentFlags().StringVar(&types.Topic, "topic", "", "pulsar topic")
 	cmd.PersistentFlags().Int64Var(&types.MessageNum, "message-num", 10000, "produce message num")
+	cmd.PersistentFlags().Int64Var(&types.ProduceTime, "produce-time", 0, "produce time for one message,0(millisecond) by default.")
 
 	return cmd
 }

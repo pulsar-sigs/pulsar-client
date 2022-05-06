@@ -6,6 +6,7 @@ var (
 	SubscriptionName string
 	MessageNum       int64
 	ConsumeTime      int64
+	ProduceTime      int64
 )
 
 type ConsumerMessageOption struct {
@@ -20,4 +21,5 @@ type ProducerMessageOption struct {
 	Topic            string
 	SubscriptionName string
 	MessageNum       int64
+	ProduceTime      int64
 }
