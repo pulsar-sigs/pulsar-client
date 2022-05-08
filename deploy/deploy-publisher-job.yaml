@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: pulsar-producer
+  namespace: default
 spec:
   template:
     spec:
@@ -9,7 +10,7 @@ spec:
       - name: rabbitmq-client
         image: ghcr.io/pulsar-sigs/pulsar-client:v0.1.0
         imagePullPolicy: IfNotPresent
-        args: ["producer", "--broker","pulsar://pulsar.default","--topic","keda","--subscription-name","scaler"]
+        args: ["producer", "--broker","pulsar://pulsar.default:6650","--topic","keda","--subscription-name","keda","--message-num","100"]
       restartPolicy: Never
   backoffLimit: 4
 

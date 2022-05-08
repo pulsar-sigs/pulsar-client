@@ -1,0 +1,22 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: pulsar-consumer
+  namespace: default
+spec:
+  scaleTargetRef:
+    name: pulsar-consumer
+  pollingInterval: 5 # Optional. Default: 30 seconds
+  cooldownPeriod: 30 # Optional. Default: 300 seconds
+  maxReplicaCount: 30 # Optional. Default: 100
+  triggers:
+    - type: pulsar
+      metadata:
+        queueName: hello
+        queueLength: "5"
+        adminURL: http://pulsar.default:8080 
+        tenant: public 
+        namespace: default 
+        topic:  persistent://public/default/keda
+        subscription: keda
