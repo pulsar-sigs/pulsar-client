@@ -15,8 +15,29 @@ spec:
       metadata:
         queueName: hello
         queueLength: "5"
-        adminURL: http://pulsar.default:8080 
+        adminURL: https://pulsar-pulsar.default:8081
         tenant: public 
         namespace: default 
         topic:  persistent://public/default/keda
         subscription: keda
+        tls: enable
+      authenticationRef:
+        name: pulsar-consumer-trigger
+---
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: pulsar-consumer-trigger
+  namespace: default
+spec:
+  secretTargetRef:
+    - parameter: ca
+      name: pulsar-pulsar
+      key: ca
+    - parameter: key
+      name: pulsar-pulsar
+      key: key
+    - parameter: cert
+      name: pulsar-pulsar
+      key: cert
+---

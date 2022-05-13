@@ -48,6 +48,8 @@ spec:
               value: "-Xms64m -Xmx256m -XX:MaxDirectMemorySize=256m"
             - name: PULSAR_PREFIX_functionWorkerEnabled
               value: "false"
+            - name: PULSAR_PREFIX_tlsRequireTrustedClientCertOnConnect
+              value: "true"
           command:
             - sh
             - -c
