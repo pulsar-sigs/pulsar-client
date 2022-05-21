@@ -4,12 +4,28 @@ import (
 	"context"
 	"errors"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/pulsar-sigs/pulsar-client/pkg/pulsar-client/types"
 	"github.com/spf13/cobra"
 )
+
+type handler struct {
+}
+
+func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func runReadnessAPI() {
+	http.Handle("/readness", &handler{})
+	err := http.ListenAndServe(":9494", nil)
+	if err != nil {
+		log.Fatal("start http server failed!", err)
+	}
+}
 
 func consumeMessage(opt *types.ConsumerMessageOption) {
 	client, err := pulsar.NewClient(pulsar.ClientOptions{
@@ -32,6 +48,7 @@ func consumeMessage(opt *types.ConsumerMessageOption) {
 		log.Fatalf("Could not create Pulsar consumer: %v", err)
 	}
 	defer pulsarconsumer.Close()
+	go runReadnessAPI()
 
 	for {
 		msg, err := pulsarconsumer.Receive(context.TODO())

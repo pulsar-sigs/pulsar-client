@@ -32,15 +32,17 @@ func produceMessage(opt *types.ProducerMessageOption) {
 
 	log.Println("will produce message total ", opt.MessageNum)
 	for i := 0; i < int(opt.MessageNum); i++ {
-		_, err := producer.Send(context.TODO(), &pulsar.ProducerMessage{
+		if opt.ProduceTime > 0 {
+			time.Sleep(time.Millisecond * time.Duration(opt.ProduceTime))
+		}
+		msg, err := producer.Send(context.TODO(), &pulsar.ProducerMessage{
 			Payload: []byte("hello"),
 		})
 		if err != nil {
 			log.Println("producer.send.message.failed!", err)
+			continue
 		}
-		if opt.ProduceTime > 0 {
-			time.Sleep(time.Millisecond * time.Duration(opt.ProduceTime))
-		}
+		log.Printf("producer.send.message.success! %d-%d-%d", msg.LedgerID(), msg.EntryID(), msg.PartitionIdx())
 	}
 }
 
