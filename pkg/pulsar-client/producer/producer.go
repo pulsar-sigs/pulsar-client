@@ -29,6 +29,7 @@ func produceMessage(opt *types.ProducerMessageOption) {
 	if err != nil {
 		log.Fatalln("create.pfoducer.failed", err)
 	}
+	go types.RunReadnessAPI()
 
 	log.Println("will produce message total ", opt.MessageNum)
 	for i := 0; i < int(opt.MessageNum); i++ {
@@ -42,7 +43,7 @@ func produceMessage(opt *types.ProducerMessageOption) {
 			log.Println("producer.send.message.failed!", err)
 			continue
 		}
-		log.Printf("producer.send.message.success! %d-%d-%d", msg.LedgerID(), msg.EntryID(), msg.PartitionIdx())
+		log.Printf("producer.send.message.success! %s %d-%d-%d", opt.Topic, msg.LedgerID(), msg.EntryID(), msg.PartitionIdx())
 	}
 }
 
