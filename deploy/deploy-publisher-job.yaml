@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
       - name: rabbitmq-client
-        image: ghcr.io/pulsar-sigs/pulsar-client:v0.1.0
+        image: ghcr.io/pulsar-sigs/pulsar-client:v0.3.1
         imagePullPolicy: IfNotPresent
         args: ["producer", "--broker","pulsar://pulsar.default:6650","--topic","keda","--subscription-name","keda","--message-num","100"]
       restartPolicy: Never

@@ -16,6 +16,9 @@ spec:
     spec:
       containers:
         - name: pulsar-consumer
-          image: ghcr.io/pulsar-sigs/pulsar-client:v0.1.1
+          image: ghcr.io/pulsar-sigs/pulsar-client:v0.3.1
           imagePullPolicy: IfNotPresent
+          readinessProbe:
+            tcpSocket:
+              port: 9494
           args: ["consumer","--broker","pulsar://pulsar-pulsar.default:6650","--topic","persistent://public/default/keda","--subscription-name","keda","--consume-time","200"]
