@@ -23,16 +23,23 @@ func consumeMessage(opt *types.ConsumerMessageOption) {
 
 	defer client.Close()
 
+	log.Println(opt.Topics)
+
 	pulsarconsumer, err := client.Subscribe(pulsar.ConsumerOptions{
 		Topic:            opt.Topic,
 		SubscriptionName: opt.SubscriptionName,
 		Type:             pulsar.Shared,
+		TopicsPattern:    opt.TopicsPattern,
+		Topics:           opt.Topics,
 	})
 	if err != nil {
 		log.Fatalf("Could not create Pulsar consumer: %v", err)
 	}
 	defer pulsarconsumer.Close()
-	go types.RunReadnessAPI()
+
+	if opt.Readness {
+		go types.RunReadnessAPI()
+	}
 
 	for {
 		msg, err := pulsarconsumer.Receive(context.TODO())
@@ -58,7 +65,7 @@ func NewConsumerCommand() *cobra.Command {
 				cmd.Help()
 				return errors.New("brokerUrl is empty")
 			}
-			if types.Topic == "" {
+			if types.Topic == "" && len(types.Topics) == 0 && types.TopicsPattern == "" {
 				cmd.Help()
 				return errors.New("topic is empty")
 			}
@@ -75,6 +82,9 @@ func NewConsumerCommand() *cobra.Command {
 				Topic:            types.Topic,
 				SubscriptionName: types.SubscriptionName,
 				ConsumeTime:      types.ConsumeTime,
+				Readness:         types.Readness,
+				TopicsPattern:    types.TopicsPattern,
+				Topics:           types.Topics,
 			})
 
 			return nil
@@ -82,8 +92,11 @@ func NewConsumerCommand() *cobra.Command {
 	}
 	cmd.PersistentFlags().StringVar(&types.BrokerUrl, "broker", "", "pulsar broker url")
 	cmd.PersistentFlags().StringVar(&types.Topic, "topic", "", "pulsar topic")
+	cmd.PersistentFlags().StringVar(&types.TopicsPattern, "topic-pattern", "", "pulsar topic parttern")
 	cmd.PersistentFlags().StringVar(&types.SubscriptionName, "subscription-name", "", "pulsar consumer subscriptionName")
 	cmd.PersistentFlags().Int64Var(&types.ConsumeTime, "consume-time", 0, "consume time (millisecond) for one message, 0 by default")
+	cmd.PersistentFlags().BoolVar(&types.Readness, "readness", false, "start readness api endpoint, true by default.")
+	cmd.PersistentFlags().StringArrayVar(&types.Topics, "topics", []string{}, "topics")
 
 	return cmd
 }
