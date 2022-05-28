@@ -23,12 +23,21 @@ func consumeMessage(opt *types.ConsumerMessageOption) {
 
 	defer client.Close()
 
-	log.Println(opt.Topics)
+	subscribeType := pulsar.Shared
+
+	switch opt.SubscriptionType {
+	case "exclusive":
+		subscribeType = pulsar.Exclusive
+	case "failover":
+		subscribeType = pulsar.Failover
+	case "keyShared":
+		subscribeType = pulsar.KeyShared
+	}
 
 	pulsarconsumer, err := client.Subscribe(pulsar.ConsumerOptions{
 		Topic:            opt.Topic,
 		SubscriptionName: opt.SubscriptionName,
-		Type:             pulsar.Shared,
+		Type:             subscribeType,
 		TopicsPattern:    opt.TopicsPattern,
 		Topics:           opt.Topics,
 	})
@@ -40,6 +49,8 @@ func consumeMessage(opt *types.ConsumerMessageOption) {
 	if opt.Readness {
 		go types.RunReadnessAPI()
 	}
+
+	log.Println("create consumer success, begin listener message from topic")
 
 	for {
 		msg, err := pulsarconsumer.Receive(context.TODO())
@@ -85,6 +96,7 @@ func NewConsumerCommand() *cobra.Command {
 				Readness:         types.Readness,
 				TopicsPattern:    types.TopicsPattern,
 				Topics:           types.Topics,
+				SubscriptionType: types.SubscriptionType,
 			})
 
 			return nil
@@ -97,6 +109,7 @@ func NewConsumerCommand() *cobra.Command {
 	cmd.PersistentFlags().Int64Var(&types.ConsumeTime, "consume-time", 0, "consume time (millisecond) for one message, 0 by default")
 	cmd.PersistentFlags().BoolVar(&types.Readness, "readness", false, "start readness api endpoint, true by default.")
 	cmd.PersistentFlags().StringArrayVar(&types.Topics, "topics", []string{}, "topics")
+	cmd.PersistentFlags().StringVar(&types.SubscriptionType, "subscription-type", "", "consumer subscription type, shared|exclusive|failover|keyShared, shared by default")
 
 	return cmd
 }

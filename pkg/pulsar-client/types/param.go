@@ -11,6 +11,8 @@ var (
 
 	Topics        []string
 	TopicsPattern string
+
+	SubscriptionType string
 )
 
 type ConsumerMessageOption struct {
@@ -21,6 +23,7 @@ type ConsumerMessageOption struct {
 	ConsumeTime      int64
 	Readness         bool
 	TopicsPattern    string
+	SubscriptionType string
 }
 
 type ProducerMessageOption struct {
