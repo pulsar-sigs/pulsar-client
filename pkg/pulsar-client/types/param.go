@@ -13,6 +13,8 @@ var (
 	TopicsPattern string
 
 	SubscriptionType string
+
+	ReadCompacted bool
 )
 
 type ConsumerMessageOption struct {
@@ -24,6 +26,7 @@ type ConsumerMessageOption struct {
 	Readness         bool
 	TopicsPattern    string
 	SubscriptionType string
+	ReadCompacted    bool
 }
 
 type ProducerMessageOption struct {

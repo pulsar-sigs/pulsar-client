@@ -40,6 +40,7 @@ func consumeMessage(opt *types.ConsumerMessageOption) {
 		Type:             subscribeType,
 		TopicsPattern:    opt.TopicsPattern,
 		Topics:           opt.Topics,
+		ReadCompacted:    opt.ReadCompacted,
 	})
 	if err != nil {
 		log.Fatalf("Could not create Pulsar consumer: %v", err)
@@ -97,6 +98,7 @@ func NewConsumerCommand() *cobra.Command {
 				TopicsPattern:    types.TopicsPattern,
 				Topics:           types.Topics,
 				SubscriptionType: types.SubscriptionType,
+				ReadCompacted:    types.ReadCompacted,
 			})
 
 			return nil
@@ -110,6 +112,8 @@ func NewConsumerCommand() *cobra.Command {
 	cmd.PersistentFlags().BoolVar(&types.Readness, "readness", false, "start readness api endpoint, true by default.")
 	cmd.PersistentFlags().StringArrayVar(&types.Topics, "topics", []string{}, "topics")
 	cmd.PersistentFlags().StringVar(&types.SubscriptionType, "subscription-type", "", "consumer subscription type, shared|exclusive|failover|keyShared, shared by default")
+
+	cmd.PersistentFlags().BoolVar(&types.ReadCompacted, "read-compacted", false, "set consumer readCompacted to true, false by default.")
 
 	return cmd
 }
