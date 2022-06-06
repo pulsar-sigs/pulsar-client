@@ -4,7 +4,6 @@ go 1.17
 
 require (
 	github.com/apache/pulsar-client-go v0.8.1
-	github.com/apache/pulsar/pulsar-function-go v0.0.0-20220422154842-eeea9ca1f6ee
 	github.com/spf13/cobra v1.4.0
 )
 

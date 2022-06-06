@@ -1,7 +1,11 @@
 package types
 
 var (
-	BrokerUrl        string
+	BrokerUrl string
+
+	AuthType   string
+	AuthParams string
+
 	Topic            string
 	SubscriptionName string
 	MessageNum       int64
@@ -27,6 +31,9 @@ type ConsumerMessageOption struct {
 	TopicsPattern    string
 	SubscriptionType string
 	ReadCompacted    bool
+
+	AuthType   string
+	AuthParams string
 }
 
 type ProducerMessageOption struct {
@@ -36,4 +43,7 @@ type ProducerMessageOption struct {
 	MessageNum       int64
 	ProduceTime      int64
 	Readness         bool
+
+	AuthType   string
+	AuthParams string
 }

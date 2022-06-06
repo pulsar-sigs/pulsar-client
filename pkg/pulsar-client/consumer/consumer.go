@@ -12,10 +12,21 @@ import (
 )
 
 func consumeMessage(opt *types.ConsumerMessageOption) {
+
+	var auth pulsar.Authentication
+	if opt.AuthType != "" && opt.AuthParams != "" {
+		autht, err := pulsar.NewAuthentication(opt.AuthType, opt.AuthParams)
+		if err != nil {
+			log.Fatalf("New auth failed: %v", err)
+		}
+		auth = autht
+	}
+
 	client, err := pulsar.NewClient(pulsar.ClientOptions{
 		URL:               opt.BrokerUrl,
 		OperationTimeout:  30 * time.Second,
 		ConnectionTimeout: 30 * time.Second,
+		Authentication:    auth,
 	})
 	if err != nil {
 		log.Fatalf("Could not instantiate Pulsar client: %v", err)
@@ -99,12 +110,15 @@ func NewConsumerCommand() *cobra.Command {
 				Topics:           types.Topics,
 				SubscriptionType: types.SubscriptionType,
 				ReadCompacted:    types.ReadCompacted,
+				AuthType:         types.AuthType,
+				AuthParams:       types.AuthParams,
 			})
-
 			return nil
 		},
 	}
 	cmd.PersistentFlags().StringVar(&types.BrokerUrl, "broker", "", "pulsar broker url")
+	cmd.PersistentFlags().StringVar(&types.AuthType, "auth-type", "", "auth type")
+	cmd.PersistentFlags().StringVar(&types.AuthParams, "auth-params", "", "auth-params")
 	cmd.PersistentFlags().StringVar(&types.Topic, "topic", "", "pulsar topic")
 	cmd.PersistentFlags().StringVar(&types.TopicsPattern, "topic-pattern", "", "pulsar topic parttern")
 	cmd.PersistentFlags().StringVar(&types.SubscriptionName, "subscription-name", "", "pulsar consumer subscriptionName")
