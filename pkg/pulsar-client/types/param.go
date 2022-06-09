@@ -19,6 +19,8 @@ var (
 	SubscriptionType string
 
 	ReadCompacted bool
+
+	ReceiverQueueSize int
 )
 
 type ConsumerMessageOption struct {
@@ -31,6 +33,8 @@ type ConsumerMessageOption struct {
 	TopicsPattern    string
 	SubscriptionType string
 	ReadCompacted    bool
+
+	ReceiverQueueSize int
 
 	AuthType   string
 	AuthParams string

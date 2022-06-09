@@ -46,12 +46,13 @@ func consumeMessage(opt *types.ConsumerMessageOption) {
 	}
 
 	pulsarconsumer, err := client.Subscribe(pulsar.ConsumerOptions{
-		Topic:            opt.Topic,
-		SubscriptionName: opt.SubscriptionName,
-		Type:             subscribeType,
-		TopicsPattern:    opt.TopicsPattern,
-		Topics:           opt.Topics,
-		ReadCompacted:    opt.ReadCompacted,
+		Topic:             opt.Topic,
+		SubscriptionName:  opt.SubscriptionName,
+		Type:              subscribeType,
+		TopicsPattern:     opt.TopicsPattern,
+		Topics:            opt.Topics,
+		ReadCompacted:     opt.ReadCompacted,
+		ReceiverQueueSize: opt.ReceiverQueueSize,
 	})
 	if err != nil {
 		log.Fatalf("Could not create Pulsar consumer: %v", err)
@@ -101,17 +102,18 @@ func NewConsumerCommand() *cobra.Command {
 			log.Println("subscriptionName:", types.SubscriptionName)
 
 			consumeMessage(&types.ConsumerMessageOption{
-				BrokerUrl:        types.BrokerUrl,
-				Topic:            types.Topic,
-				SubscriptionName: types.SubscriptionName,
-				ConsumeTime:      types.ConsumeTime,
-				Readness:         types.Readness,
-				TopicsPattern:    types.TopicsPattern,
-				Topics:           types.Topics,
-				SubscriptionType: types.SubscriptionType,
-				ReadCompacted:    types.ReadCompacted,
-				AuthType:         types.AuthType,
-				AuthParams:       types.AuthParams,
+				BrokerUrl:         types.BrokerUrl,
+				Topic:             types.Topic,
+				SubscriptionName:  types.SubscriptionName,
+				ConsumeTime:       types.ConsumeTime,
+				Readness:          types.Readness,
+				TopicsPattern:     types.TopicsPattern,
+				Topics:            types.Topics,
+				SubscriptionType:  types.SubscriptionType,
+				ReadCompacted:     types.ReadCompacted,
+				AuthType:          types.AuthType,
+				AuthParams:        types.AuthParams,
+				ReceiverQueueSize: types.ReceiverQueueSize,
 			})
 			return nil
 		},
@@ -128,6 +130,7 @@ func NewConsumerCommand() *cobra.Command {
 	cmd.PersistentFlags().StringVar(&types.SubscriptionType, "subscription-type", "", "consumer subscription type, shared|exclusive|failover|keyShared, shared by default")
 
 	cmd.PersistentFlags().BoolVar(&types.ReadCompacted, "read-compacted", false, "set consumer readCompacted to true, false by default.")
+	cmd.PersistentFlags().IntVar(&types.ReceiverQueueSize, "receiver-queue-size", 1000, "consumer ReceiverQueueSize")
 
 	return cmd
 }
