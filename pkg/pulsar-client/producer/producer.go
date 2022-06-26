@@ -35,7 +35,9 @@ func produceMessage(opt *types.ProducerMessageOption) {
 	defer client.Close()
 
 	producer, err := client.CreateProducer(pulsar.ProducerOptions{
-		Topic: opt.Topic,
+		Topic:                   opt.Topic,
+		DisableBatching:         false,
+		BatchingMaxPublishDelay: time.Second,
 	})
 	if err != nil {
 		log.Fatalln("create.pfoducer.failed", err)
@@ -49,15 +51,18 @@ func produceMessage(opt *types.ProducerMessageOption) {
 		if opt.ProduceTime > 0 {
 			time.Sleep(time.Millisecond * time.Duration(opt.ProduceTime))
 		}
-		msg, err := producer.Send(context.TODO(), &pulsar.ProducerMessage{
+		producer.SendAsync(context.TODO(), &pulsar.ProducerMessage{
 			Payload: []byte(opt.Message),
+		}, func(mid pulsar.MessageID, msg *pulsar.ProducerMessage, e error) {
+			if e != nil {
+				log.Println("producer.send.message.failed!", e)
+			} else {
+				log.Printf("producer.send.message.success! %s %d-%d-%d", opt.Topic, mid.LedgerID(), mid.EntryID(), mid.PartitionIdx())
+			}
 		})
-		if err != nil {
-			log.Println("producer.send.message.failed!", err)
-			continue
-		}
-		log.Printf("producer.send.message.success! %s %d-%d-%d", opt.Topic, msg.LedgerID(), msg.EntryID(), msg.PartitionIdx())
 	}
+	log.Println("exit after 3 second")
+	time.Sleep(time.Second * 3)
 }
 
 func NewProducerCommand() *cobra.Command {
