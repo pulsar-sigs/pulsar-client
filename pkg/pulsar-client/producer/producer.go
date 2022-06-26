@@ -50,7 +50,7 @@ func produceMessage(opt *types.ProducerMessageOption) {
 			time.Sleep(time.Millisecond * time.Duration(opt.ProduceTime))
 		}
 		msg, err := producer.Send(context.TODO(), &pulsar.ProducerMessage{
-			Payload: []byte("hello"),
+			Payload: []byte(opt.Message),
 		})
 		if err != nil {
 			log.Println("producer.send.message.failed!", err)
@@ -86,6 +86,7 @@ func NewProducerCommand() *cobra.Command {
 				Readness:    types.Readness,
 				AuthType:    types.AuthType,
 				AuthParams:  types.AuthParams,
+				Message:     types.Message,
 			})
 
 			return nil
@@ -96,6 +97,7 @@ func NewProducerCommand() *cobra.Command {
 	cmd.PersistentFlags().StringVar(&types.AuthParams, "auth-params", "", "auth-params")
 	cmd.PersistentFlags().StringVar(&types.Topic, "topic", "", "pulsar topic")
 	cmd.PersistentFlags().Int64Var(&types.MessageNum, "message-num", 10000, "produce message num")
+	cmd.PersistentFlags().StringVar(&types.Message, "message", "hello", "produce message")
 	cmd.PersistentFlags().Int64Var(&types.ProduceTime, "produce-time", 0, "produce time for one message,0(millisecond) by default.")
 	cmd.PersistentFlags().BoolVar(&types.Readness, "readness", false, "start readness api endpoint, true by default.")
 

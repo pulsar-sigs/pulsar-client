@@ -9,6 +9,7 @@ var (
 	Topic            string
 	SubscriptionName string
 	MessageNum       int64
+	Message          string
 	ConsumeTime      int64
 	ProduceTime      int64
 	Readness         bool
@@ -45,6 +46,7 @@ type ProducerMessageOption struct {
 	Topic            string
 	SubscriptionName string
 	MessageNum       int64
+	Message          string
 	ProduceTime      int64
 	Readness         bool
 
