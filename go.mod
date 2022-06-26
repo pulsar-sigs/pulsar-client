@@ -7,7 +7,6 @@ require (
 	github.com/spf13/cobra v1.4.0
 )
 
-replace github.com/apache/pulsar-client-go v0.8.1 => D:\repo\git\pulsar-client-go
 
 require (
 	github.com/99designs/keyring v1.1.6 // indirect
