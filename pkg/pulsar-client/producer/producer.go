@@ -52,8 +52,9 @@ func produceMessage(opt *types.ProducerMessageOption) {
 			time.Sleep(time.Millisecond * time.Duration(opt.ProduceTime))
 		}
 		producer.SendAsync(context.TODO(), &pulsar.ProducerMessage{
-			Payload: []byte(opt.Message),
-			Key: types.MessageKey,
+			Payload:   []byte(opt.Message),
+			Key:       types.MessageKey,
+			EventTime: time.Now(),
 		}, func(mid pulsar.MessageID, msg *pulsar.ProducerMessage, e error) {
 			if e != nil {
 				log.Println("producer.send.message.failed!", e)
