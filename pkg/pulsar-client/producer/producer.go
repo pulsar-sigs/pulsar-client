@@ -36,7 +36,7 @@ func produceMessage(opt *types.ProducerMessageOption) {
 
 	producer, err := client.CreateProducer(pulsar.ProducerOptions{
 		Topic:                   opt.Topic,
-		DisableBatching:         false,
+		DisableBatching:         true,
 		BatchingMaxPublishDelay: time.Second,
 	})
 	if err != nil {
