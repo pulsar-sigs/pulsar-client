@@ -23,18 +23,21 @@ var (
 	ReadCompacted bool
 
 	ReceiverQueueSize int
+
+	SubscriptionPosition string
 )
 
 type ConsumerMessageOption struct {
-	BrokerUrl        string
-	Topic            string
-	Topics           []string
-	SubscriptionName string
-	ConsumeTime      int64
-	Readness         bool
-	TopicsPattern    string
-	SubscriptionType string
-	ReadCompacted    bool
+	BrokerUrl            string
+	Topic                string
+	Topics               []string
+	SubscriptionName     string
+	ConsumeTime          int64
+	Readness             bool
+	TopicsPattern        string
+	SubscriptionType     string
+	SubscriptionPosition string
+	ReadCompacted        bool
 
 	ReceiverQueueSize int
 
