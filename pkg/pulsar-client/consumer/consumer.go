@@ -118,7 +118,7 @@ func NewConsumerCommand() *cobra.Command {
 			return nil
 		},
 	}
-	cmd.PersistentFlags().StringVar(&types.BrokerUrl, "broker", "", "pulsar broker url")
+	cmd.PersistentFlags().StringVar(&types.BrokerUrl, "broker", "pulsar://localhost:6650", "pulsar broker url")
 	cmd.PersistentFlags().StringVar(&types.AuthType, "auth-type", "", "auth type")
 	cmd.PersistentFlags().StringVar(&types.AuthParams, "auth-params", "", "auth-params")
 	cmd.PersistentFlags().StringVar(&types.Topic, "topic", "", "pulsar topic")
